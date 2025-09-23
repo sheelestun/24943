@@ -10,6 +10,7 @@ int main(void)
     struct tm *sp;
 
     setenv("TZ", "America/Los_Angeles", 1);
+    //можно было putenv("TZ=America/Los_Angeles"), но мне не нравится
     tzset();
     (void) time( &now );
 
