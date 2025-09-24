@@ -42,7 +42,11 @@ int main(int argc, char *argv[])
 
             case 'U':
                 getrlimit(RLIMIT_FSIZE, &rl);
-                rl.rlim_cur = strtol(optarg, NULL, 10);
+                rl.rlim_cur = atol(optarg);
+                if (rl.rlim_cur < -1) {
+                    printf("(U): You should use positive number or -1 for unlimited\n");
+                    break;
+                }
                 setrlimit(RLIMIT_FSIZE, &rl);
                 break;
 
@@ -53,7 +57,11 @@ int main(int argc, char *argv[])
 
             case 'C':
                 getrlimit(RLIMIT_CORE, &rl);
-                rl.rlim_cur = strtol(optarg, NULL, 10);
+                rl.rlim_cur = atol(optarg);
+                if (rl.rlim_cur < -1) {
+                    printf("(C): You should use positive number or -1 for unlimited\n");
+                    break;
+                }
                 setrlimit(RLIMIT_CORE, &rl);
                 break;
 
