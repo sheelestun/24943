@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 {
     char options[] = "ispuU:cC:dvV:";
     int c;
+    long param;
     struct rlimit rl;
 
     printf("argc equals %d\n", argc);
@@ -42,11 +43,12 @@ int main(int argc, char *argv[])
 
             case 'U':
                 getrlimit(RLIMIT_FSIZE, &rl);
-                rl.rlim_cur = atol(optarg);
-                if (rl.rlim_cur < -1) {
+                param = atol(optarg);
+                if (param < -1) {
                     printf("(U): You should use positive number or -1 for unlimited\n");
                     break;
                 }
+                rl.rlim_cur = param;
                 setrlimit(RLIMIT_FSIZE, &rl);
                 break;
 
@@ -57,11 +59,12 @@ int main(int argc, char *argv[])
 
             case 'C':
                 getrlimit(RLIMIT_CORE, &rl);
-                rl.rlim_cur = atol(optarg);
-                if (rl.rlim_cur < -1) {
+                param = atol(optarg);
+                if (param < -1) {
                     printf("(C): You should use positive number or -1 for unlimited\n");
                     break;
                 }
+                rl.rlim_cur = param;
                 setrlimit(RLIMIT_CORE, &rl);
                 break;
 
