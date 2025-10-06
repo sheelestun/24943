@@ -7,28 +7,30 @@ extern char *tzname[];
 int main(void)
 {
     time_t now;
-    struct tm *sp;
+    
+    time(&now);
+    struct tm *utc = gmtime(&now);
+    printf("UTC время: %d/%d/%02d %d:%02d\n",
+        utc->tm_mon + 1, utc->tm_mday,
+        utc->tm_year + 1900, utc->tm_hour,
+        utc->tm_min);
 
-    setenv("TZ", "PST8PST", 1);
+    setenv("TZ", "UTC+8", 1);
     tzset();
-    (void) time( &now );
-    sp = localtime(&now);
-
-    printf("%d/%d/%02d %d:%02d %s\n",
-        sp->tm_mon + 1, sp->tm_mday,
-        sp->tm_year + 1900, sp->tm_hour,
-        sp->tm_min, tzname[sp->tm_isdst]);
-
-    
-    //Если учитывать подсказку, то, видимо, хотели так:
-    sp = gmtime(&now);
-    sp->tm_hour -= 8;
-    mktime(sp);
-    
-
-    printf("%d/%d/%02d %d:%02d\n",
+    time(&now);
+    struct tm *sp = localtime(&now);
+    printf("UTC+8: %d/%d/%02d %d:%02d\n",
         sp->tm_mon + 1, sp->tm_mday,
         sp->tm_year + 1900, sp->tm_hour,
         sp->tm_min);
+
+    time(&now);
+    sp = gmtime(&now);
+    int pst_hour = (sp->tm_hour - 8 + 24) % 24;  // Корректная арифметика часов
+    printf("Прямое вычитание: %d/%d/%02d %d:%02d\n",
+        sp->tm_mon + 1, sp->tm_mday,
+        sp->tm_year + 1900, pst_hour,
+        sp->tm_min);
+
     exit(0);
 }

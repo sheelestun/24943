@@ -9,7 +9,7 @@ int main(){
     char c;
     long table[2][500];
     int i = 0, j = 0;
-    table[0][0] = 0L;
+    // table[0][0] = 0L;
     while(read(fd, &c, 1)) {
         if (c == '\n') {
             j++;
