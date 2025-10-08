@@ -16,6 +16,7 @@ int main(void) {
     if (!pt) return 1;
 
     char buf[64];
+    pt->tm_hour -=1;
     // Пример формата: 2025-10-07 12:34:56 PDT
     if (strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S %Z", pt) == 0) return 1;
 
