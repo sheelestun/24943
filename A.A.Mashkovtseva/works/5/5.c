@@ -14,7 +14,7 @@ int main(){
         if (c == '\n') {
             j++;
             table[1][i] = j;
-            table[0][i] = lseek(fd, 0L, SEEK_CUR);
+            table[0][i] = lseek(fd, 0, SEEK_CUR);
             j = 0;
             i++;
         }

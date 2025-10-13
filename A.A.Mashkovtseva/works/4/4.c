@@ -21,14 +21,16 @@ int main(){
     node *tail = head;
 
     char line[BUFSIZ];
+    printf("Write string or write . to get all written strings\n");
     while (fgets(line, BUFSIZ, stdin)) {
         if (line[0] == '.') break;
         tail->next = create(line);
         tail = tail->next;
+        printf("Write string or write . to get all written strings\n");
     }
 
     for (node *i = head->next; i != NULL; i = i->next){
-        printf("%s", i->string);
+        printf("Your strings:\n%s", i->string);
     }
 
     return 0;

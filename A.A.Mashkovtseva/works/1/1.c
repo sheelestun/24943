@@ -4,7 +4,7 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <sys/resource.h>
-#include <linux/limits.h>
+//#include <linux/limits.h>
 #include <string.h>
 
 extern char** environ;
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
                 break;
 
             case 'd':
-                char cwd[PATH_MAX];
+                char cwd[500];
                 getcwd(cwd, sizeof(cwd));
                 printf("Current working directory: %s\n", cwd);
                 break;
