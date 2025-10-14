@@ -68,23 +68,29 @@ int main(int argc, char *argv[])
                 setrlimit(RLIMIT_CORE, &rl);
                 break;
 
-            case 'd':
+            case 'd': {
                 char cwd[500];
                 getcwd(cwd, sizeof(cwd));
                 printf("Current working directory: %s\n", cwd);
                 break;
+            }
 
-            case 'v':
-                for (char **env = environ; *env != 0; env++) {
-                    printf("%s\n", *env);    
+            case 'v': {
+                char **env;
+                for (env = environ; *env != 0; env++) {
+                    printf("%s\n", *env);
                 }
                 break;
+            }
 
-            case 'V':
+            case 'V': {
                 char* checker = strchr(optarg, '=');
-                if (checker != NULL && checker != optarg && checker[1] != '\0') putenv(optarg);
-                else printf("You shold use \"NAME=valeue\" format for -V option\n");
+                if (checker != NULL && checker != optarg && checker[1] != '\0')
+                    putenv(optarg);
+                else
+                    printf("You shold use \"NAME=valeue\" format for -V option\n");
                 break;
+            }
                 
             case '?':
                 break;
