@@ -8,7 +8,12 @@
 
 static const char *name_of(uid_t u) {
     struct passwd *p = getpwuid(u);
-    return p ? p->pw_name : "?";
+    
+    if (p != NULL) {
+        return p->pw_name;
+    } else {
+        return "?";
+    }
 }
 
 void print_user_ids() {
@@ -42,7 +47,12 @@ void make_ids_equal() {
 }
 
 int main(int argc, char *argv[]) {
-    const char *path = (argc > 1) ? argv[1] : "data.txt";
+    const char *path;
+    if (argc > 1) {
+        path = argv[1];
+    } else {
+        path = "data.txt";
+    }
     
     printf("=== First attempt ===\n");
     print_user_ids();
