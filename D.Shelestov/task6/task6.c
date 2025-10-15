@@ -35,6 +35,21 @@ void freeArray(Array *a) {
     a->cnt = a->cap = 0;
 }
 
+void printTable(Array *table) {
+    printf("\nLine Table (Offset and Length):\n");
+    printf("Line #  |  Offset  |  Length\n");
+    printf("--------+----------+---------\n");
+    
+    for (int i = 0; i < table->cnt; i++) {
+        printf("%6d  | %8ld | %7ld\n", 
+               i + 1, 
+               table->array[i].offset, 
+               table->array[i].length);
+    }
+    printf("--------+----------+---------\n");
+    printf("Total lines: %d\n\n", table->cnt);
+}
+
 int main(int argc, char *argv[]) {
     if (argc != 2) { return 1; }
     char *path = argv[1];
@@ -62,6 +77,8 @@ int main(int argc, char *argv[]) {
         Line current = {lineOffset, lineLength};
         insertArray(&table, current);
     }
+
+    printTable(&table);
 
     fd_set readfds;
     struct timeval timeout;
@@ -95,7 +112,7 @@ int main(int argc, char *argv[]) {
 
     while (num != 0) {
         if (num < 0) {
-            printf("Line number must be positive!\n");
+            printf("Line number must be positive!");
         } else if(table.cnt < num){
             printf("The file contains only %d line(s).\n", table.cnt);
         }else
