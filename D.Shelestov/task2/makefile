@@ -1,6 +1,6 @@
 build:
-	gcc task2.c -o task2
+	gcc task2.c -o task2.out
 
 run:
-	./task2
+	./task2.out
 

@@ -70,11 +70,14 @@ int main(int argc, char *argv[]) {
         printf("Enter the line number: ");
         scanf("%d", &num);
 
-        if (num == 0) { break; }
+        if (num < 0) {
+	    printf("The Line number must pe positive");
+	}
         if (table.cnt < num) {
             printf("The file contains only %d line(s).\n", table.cnt);
             continue;
         }
+	if (num == 0){ break; }
 
         Line line = table.array[num - 1];
         char *buf = calloc(line.length + 1, sizeof(char));

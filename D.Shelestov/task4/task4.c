@@ -66,10 +66,27 @@ void setRawMode(int enable) {
     }
 }
 
+// Function to check if character is allowed
+int isAllowedChar(unsigned char c) {
+    // Allow letters A-Z, a-z
+    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
+        return 1;
+    }
+    // Allow space
+    if (c == ' ') {
+        return 1;
+    }
+    // Allow dot (only checked separately in main logic)
+    if (c == '.') {
+        return 1;
+    }
+    return 0;
+}
+
 // Function to read characters with filtering
 int readFilteredLine(char *buffer, int size) {
     int pos = 0;
-    char c;
+    unsigned char c;
     
     setRawMode(1);
     
@@ -78,56 +95,52 @@ int readFilteredLine(char *buffer, int size) {
             continue;
         }
         
-        // Handle escape sequences (arrow keys, etc.)
-        if (c == 27) { // ESC character
-            // Read the next character to determine if it's an arrow key
-            char next_chars[2];
-            if (read(STDIN_FILENO, &next_chars[0], 1) == 1) {
-                if (next_chars[0] == '[') {
-                    // Read the third character
-                    if (read(STDIN_FILENO, &next_chars[1], 1) == 1) {
-                        // Arrow keys: A=up, B=down, C=right, D=left
-                        // Function keys: 1~6, etc.
-                        // Just ignore all escape sequences
-                        continue;
-                    }
-                }
-            }
-            continue;
-        }
-        
-        // Handle control characters
-        if (c == '\n' || c == '\r') { // Enter
+        // Handle control characters and special cases
+        if (c == '\n' || c == '\r') { // Enter - ASCII 10, 13
             printf("\n");
             break;
-        } else if (c == 127 || c == 8) { // Backspace
+        } else if (c == 127 || c == 8) { // Backspace - ASCII 8, 127
             if (pos > 0) {
                 pos--;
                 printf("\b \b");
                 fflush(stdout);
             }
-        } else if (c == 3) { // Ctrl+C
+        } else if (c == 3) { // Ctrl+C - ASCII 3
             setRawMode(0);
             exit(0);
-        } else if (c == 4) { // Ctrl+D
+        } else if (c == 4) { // Ctrl+D - ASCII 4
             setRawMode(0);
             return -1;
-        } else if (c == '.') { // Dot for termination
-            if (pos == 0) {
-                buffer[pos++] = c;
-                printf("%c", c);
-                fflush(stdout);
-                printf("\n");
-                break;
+        } else if (c == 27) { // ESC - ASCII 27 (arrow keys, function keys)
+            // Read and discard the entire escape sequence
+            char next_char;
+            // Read the second character of escape sequence
+            if (read(STDIN_FILENO, &next_char, 1) == 1) {
+                if (next_char == '[') {
+                    // Continue reading until we get a letter character
+                    while (read(STDIN_FILENO, &next_char, 1) == 1) {
+                        // Escape sequences end with a letter (A-Z)
+                        if (next_char >= 'A' && next_char <= 'Z') {
+                            break;
+                        }
+                        // Also break on numbers to prevent infinite loop
+                        if (next_char >= '0' && next_char <= '9') {
+                            // Continue reading until we get a letter
+                            continue;
+                        }
+                    }
+                }
+                // For other escape sequences (like ESC O for F1-F4), just discard
             }
-        } else if (isalpha((unsigned char)c) || c == ' ') { // Letters and spaces
+            continue;
+        } else if (isAllowedChar(c)) { // Allowed characters
             if (pos < size - 1) {
                 buffer[pos++] = c;
                 printf("%c", c);
                 fflush(stdout);
             }
         }
-        // All other characters (digits, special characters) are ignored
+        // ALL other ASCII characters are ignored (digits, symbols, control chars, etc.)
     }
     
     buffer[pos] = '\0';

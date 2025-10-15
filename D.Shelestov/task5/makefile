@@ -1,8 +1,5 @@
 build:
-	gcc task5.c -o task5
+	gcc task5.c -o task5.out
 
 run:
-	./task5 test.txt
-
-clean:
-	rm -f line_reader
+	./task5.out test.txt

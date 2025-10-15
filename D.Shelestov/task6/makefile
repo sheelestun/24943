@@ -1,4 +1,4 @@
 build:
-	gcc task6.c -o task6
+	gcc task6.c -o task6.out
 run:
-	./task6 test.txt
+	./task6.out test.txt
