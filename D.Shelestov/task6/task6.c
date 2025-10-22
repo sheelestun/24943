@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/select.h>
+#include <ctype.h>
 
 typedef struct {
     off_t offset;
@@ -107,31 +108,68 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    int num;
-    scanf("%d", &num);
+    char input[100];
+    int num = -1;
 
-    while (num != 0) {
-        if (num < 0) {
-            printf("Line number must be positive!");
-        } else if(table.cnt < num){
-            printf("The file contains only %d line(s).\n", table.cnt);
-        }else
-        {
-            Line line = table.array[num - 1];
-            char *buf = calloc(line.length + 1, sizeof(char));
-            lseek(fd, line.offset, SEEK_SET);
-            read(fd, buf, line.length);
-            printf("%s", buf);
-            if (buf[line.length - 1] != '\n') {
-                printf("\n");
-            }
-            free(buf);
+    while (1) {
+        if (scanf("%99s", input) != 1) {
+            printf("Error reading input.\n");
+            break;
         }
         
+        int is_number = 1;
+        int has_digits = 0;
         
-
+        for (int i = 0; input[i] != '\0'; i++) {
+            if (i == 0 && input[i] == '-') {
+                continue;
+            }
+            if (!isdigit(input[i])) {
+                is_number = 0;
+                break;
+            }
+            has_digits = 1;
+        }
+        
+        if (input[0] == '-' && !has_digits) {
+            is_number = 0;
+        }
+        
+        if (!is_number) {
+            printf("Input must be a number!\n");
+            printf("Enter the line number: ");
+            continue;
+        }
+        
+        num = atoi(input);
+        
+        if (num == 0) {
+            break;
+        }
+        
+        if (num < 0) {
+            printf("Line number must be positive!\n");
+            printf("Enter the line number: ");
+            continue;
+        }
+        
+        if (table.cnt < num) {
+            printf("The file contains only %d line(s).\n", table.cnt);
+            printf("Enter the line number: ");
+            continue;
+        }
+        
+        Line line = table.array[num - 1];
+        char *buf = calloc(line.length + 1, sizeof(char));
+        lseek(fd, line.offset, SEEK_SET);
+        read(fd, buf, line.length);
+        printf("%s", buf);
+        if (buf[line.length - 1] != '\n') {
+            printf("\n");
+        }
+        free(buf);
+        
         printf("Enter the line number: ");
-        scanf("%d", &num);
     }
 
     close(fd);
